@@ -19,7 +19,7 @@ use {
     num::{rational::Ratio, BigInt, Zero},
     number::serialization::HexOrDecimalU256,
     reqwest::Client,
-    serde::Serialize,
+    serde::{Deserialize, Serialize},
     serde_with::{serde_as, DisplayFromStr},
     std::{
         collections::{BTreeMap, HashMap, HashSet},
@@ -38,7 +38,7 @@ pub trait PoolFetching: Send + Sync {
 }
 
 /// Pool data in a format prepared for solvers.
-#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct PoolInfo {
     /// Skip serializing address since it's redundant (already serialized
     /// outside of this struct)
@@ -51,7 +51,7 @@ pub struct PoolInfo {
 
 /// Pool state in a format prepared for solvers.
 #[serde_as]
-#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct PoolState {
     #[serde_as(as = "HexOrDecimalU256")]
     pub sqrt_price: U256,
@@ -62,13 +62,13 @@ pub struct PoolState {
     // (tick_idx, liquidity_net)
     #[serde_as(as = "BTreeMap<DisplayFromStr, DisplayFromStr>")]
     pub liquidity_net: BTreeMap<BigInt, BigInt>,
-    #[serde(skip_serializing)]
+    #[serde(skip_serializing, skip_deserializing)]
     pub fee: Ratio<u32>,
 }
 
 /// Pool stats in a format prepared for solvers
 #[serde_as]
-#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct PoolStats {
     #[serde_as(as = "HexOrDecimalU256")]
     #[serde(rename = "mean")]

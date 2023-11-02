@@ -21,7 +21,7 @@ use {
     web3::types::AccessList,
 };
 
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct BatchAuctionModel {
     pub tokens: BTreeMap<H160, TokenInfoModel>,
     pub orders: BTreeMap<usize, OrderModel>,
@@ -30,7 +30,7 @@ pub struct BatchAuctionModel {
 }
 
 #[serde_as]
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct OrderModel {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<OrderUid>,
@@ -62,7 +62,7 @@ pub struct OrderModel {
     pub reward: f64,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AmmModel {
     #[serde(flatten)]
     pub parameters: AmmParameters,
@@ -73,7 +73,7 @@ pub struct AmmModel {
     pub address: H160,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind")]
 pub enum AmmParameters {
     ConstantProduct(ConstantProductPoolParameters),
@@ -83,7 +83,7 @@ pub enum AmmParameters {
 }
 
 #[serde_as]
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct ConstantProductPoolParameters {
     #[serde_as(as = "BTreeMap<_, HexOrDecimalU256>")]
     pub reserves: BTreeMap<H160, U256>,
@@ -98,13 +98,13 @@ pub struct WeightedPoolTokenData {
     pub weight: BigRational,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WeightedProductPoolParameters {
     pub reserves: BTreeMap<H160, WeightedPoolTokenData>,
 }
 
 #[serde_as]
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StablePoolParameters {
     #[serde_as(as = "BTreeMap<_, HexOrDecimalU256>")]
     pub reserves: BTreeMap<H160, U256>,
@@ -115,13 +115,13 @@ pub struct StablePoolParameters {
 }
 
 #[serde_as]
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct ConcentratedPoolParameters {
     pub pool: PoolInfo,
 }
 
 #[serde_as]
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct TokenInfoModel {
     pub decimals: Option<u8>,
     pub alias: Option<String>,
@@ -299,7 +299,7 @@ impl SettledBatchAuctionModel {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Default)]
+#[derive(Clone, Debug, Serialize, Default, Deserialize)]
 pub struct MetadataModel {
     pub environment: Option<String>,
     pub auction_id: Option<AuctionId>,
@@ -397,7 +397,7 @@ pub struct ExecutionPlanCoordinatesModel {
 }
 
 /// The result of a submission process for a winning solver
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SubmissionResult {
     Success(H256),
@@ -407,7 +407,7 @@ pub enum SubmissionResult {
 }
 
 /// The result a given solver achieved in the auction
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum AuctionResult {
     /// Solution was valid and was ranked at the given place
@@ -423,7 +423,7 @@ pub enum AuctionResult {
 }
 
 #[serde_as]
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SolverRejectionReason {
     /// The solver didn't return a successful response
@@ -486,7 +486,7 @@ pub enum SolverRejectionReason {
     DuplicatedSolutionId(u64),
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SolverRunError {
     Timeout,
@@ -494,7 +494,7 @@ pub enum SolverRunError {
 }
 
 /// Contains all information about a failing settlement simulation
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionWithError {
     /// Transaction data used for simulation of the settlement
@@ -506,7 +506,7 @@ pub struct TransactionWithError {
 
 /// Transaction data used for simulation of the settlement
 #[serde_as]
-#[derive(Clone, Serialize, Derivative)]
+#[derive(Clone, Serialize, Derivative, Deserialize)]
 #[derivative(Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SimulatedTransaction {
@@ -537,7 +537,7 @@ pub struct SimulatedTransaction {
 }
 
 /// Whether or not internalizable interactions should be encoded as calldata
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum InternalizationStrategy {
     #[serde(rename = "Disabled")]
     EncodeAllInteractions,
